@@ -16,11 +16,12 @@ def compute_metrics(eval_pred):
     decoded_preds = curr_tokenizer.batch_decode(predictions, skip_special_tokens=True)
     labels = np.where(labels != -100, labels, curr_tokenizer.pad_token_id)
     decoded_labels = curr_tokenizer.batch_decode(labels, skip_special_tokens=True)
-    results = bleu.compute(predictions=decoded_preds, references=decoded_labels)
+    results_bleu = bleu.compute(predictions=decoded_preds, references=decoded_labels)
     exact_match = evaluate.load("exact_match")
-    results = exact_match.compute(references=decoded_labels, predictions=decoded_preds,
+    results_em = exact_match.compute(references=decoded_labels, predictions=decoded_preds,
                                   ignore_case=True, ignore_punctuation=True)
-    return {'bleu':results['bleu'],'EM':round(results["exact_match"], 2)}
+    
+    return {'bleu':results_bleu['bleu'],'EM':round(results_em["exact_match"], 2)}
 
 def preprocess_function(examples):
     global base
